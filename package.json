@@ -1,0 +1,11 @@
+{
+  "name": "create-hdl",
+  "version": "1.0.0",
+  "bin": {
+    "create-hdl": "./create-hdl.js"
+  },
+  "type": "module",
+  "dependencies": {
+    "inquirer": "^9.0.0"
+  }
+}
