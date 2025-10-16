@@ -49,5 +49,7 @@ async function main() {
 
   // Step 5: Install recommended VS Code extensions
   await installExtensions(projectDir);
-
-  // Step 6: Initialize Git repo (optional but
+  console.log(chalk.green.bold("\n✅ Project setup complete!"));
+  console.log(chalk.gray(`\n👉 Open the project in VS Code:\n`));
+  console.log(chalk.white(`   code ${projectDir}\n`));
+}
