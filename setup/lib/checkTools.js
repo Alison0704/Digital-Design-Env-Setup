@@ -1,20 +1,26 @@
-// lib/checkTools.js
-import { execSync } from "child_process";
-import chalk from "chalk";
+import { log, commandExists } from "./utils.js";
 
-export async function checkTools() {
-  const tools = [
-    { name: "iverilog", description: "Icarus Verilog" },
-    { name: "ghdl", description: "GHDL (VHDL Simulator)" },
-    { name: "gtkwave", description: "GTKWave Viewer" }
-  ];
+export async function checkTools(language) {
+  log.step("Checking required HDL tools...");
 
-  for (const tool of tools) {
-    try {
-      execSync(`${tool.name} --version`, { stdio: "ignore" });
-      console.log(chalk.green(`✅ ${tool.description} (${tool.name}) found`));
-    } catch {
-      console.log(chalk.yellow(`⚠️  ${tool.description} (${tool.name}) not found`));
+  if (language === "verilog") {
+    if (!(await commandExists("iverilog"))) {
+      log.warn("Icarus Verilog not found. Please install it before running simulations.");
+    } else {
+      log.success("Icarus Verilog found.");
     }
+  } else if (language === "vhdl") {
+    if (!(await commandExists("ghdl"))) {
+      log.warn("GHDL not found. Please install it before running simulations.");
+    } else {
+      log.success("GHDL found.");
+    }
+  }
+
+  // Check for Surfer waveform viewer
+  if (!(await commandExists("surfer"))) {
+    log.warn("Surfer not found. Please install it to view waveforms.");
+  } else {
+    log.success("Surfer found.");
   }
 }

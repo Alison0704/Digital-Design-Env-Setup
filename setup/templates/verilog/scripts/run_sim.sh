@@ -1,8 +1,30 @@
 #!/usr/bin/env bash
-TOP=${1:-top_module}
-mkdir -p sim/generated
+# ==============================================
+# HDL Simulation Script
+# Supports: Verilog (Icarus Verilog)
+# ==============================================
 
-# Icarus Verilog (verilog)
-iverilog -o sim/${TOP}_sim src/${TOP}.v tb/${TOP}_tb.v || { echo "iverilog failed"; exit 1; }
-vvp sim/${TOP}_sim
-echo "Waveform: sim/waves.vcd"
+set -e  # Exit on first error
+
+WAVE_FILE="sim/wave.vcd"
+mkdir -p sim
+
+echo "🔧 Running verilog simulation..."
+echo "----------------------------------------------"
+
+# ==============================================
+# Verilog (Icarus Verilog)
+# ==============================================
+OUTPUT="sim/wave.out"
+
+iverilog -o "$OUTPUT" src/*.v tb/*.v
+vvp "$OUTPUT"
+
+if [ -f "$WAVE_FILE" ]; then
+  echo "✅ Simulation complete. Waveform generated: $WAVE_FILE"
+else
+  echo "⚠️  No VCD waveform found. Did your testbench dump signals?"
+fi
+
+echo "----------------------------------------------"
+echo "Done ✅"

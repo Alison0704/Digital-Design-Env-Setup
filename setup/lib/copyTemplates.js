@@ -5,7 +5,7 @@ import chalk from "chalk";
 import { fileURLToPath } from "url";
 
 /**
- * Copies the correct HDL template (Verilog or VHDL)
+ * Copies the correct HDL template (Verilog or VHD)
  * from /templates/<language> into the target project directory.
  */
 
@@ -32,6 +32,19 @@ export async function copyTemplates(language, projectDir) {
     overwrite: true,
     filter: (src) => !src.endsWith(".DS_Store"),
   });
+
+  // Make shell scripts executable
+  console.log(chalk.gray(`→ Making scripts executable...`));
+  const scriptsDir = path.join(projectDir, "scripts");
+  if (await fs.pathExists(scriptsDir)) {
+    const scriptFiles = await fs.readdir(scriptsDir);
+    for (const file of scriptFiles) {
+      if (file.endsWith(".sh")) {
+        const scriptPath = path.join(scriptsDir, file);
+        await fs.chmod(scriptPath, 0o755);
+      }
+    }
+  }
 
   console.log(chalk.green(`✅ Template copied successfully to ${projectDir}`));
 }

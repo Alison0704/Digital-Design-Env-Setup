@@ -1,55 +1,80 @@
 #!/usr/bin/env node
 import inquirer from "inquirer";
+import fs from "fs-extra";
 import path from "path";
-import chalk from "chalk";
 import { fileURLToPath } from "url";
+import { checkTools } from "../lib/checkTools.js";
 import { copyTemplates } from "../lib/copyTemplates.js";
 import { createVSCodeTasks } from "../lib/createVSCodeTasks.js";
 import { installExtensions } from "../lib/installExtensions.js";
-import { checkTools } from "../lib/checkTools.js";
-import fs from "fs-extra";
+import { log } from "../lib/utils.js";
 
+// Support __dirname in ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 async function main() {
-  console.log(chalk.cyan.bold("\n⚙️  HDL Project Setup Tool\n"));
+  console.clear();
+  log.step("HDL Project Setup Wizard");
 
-  // Step 1: Ask for project type and name
-  const answers = await inquirer.prompt([
-    {
-      type: "list",
-      name: "language",
-      message: "Which HDL would you like to use?",
-      choices: ["verilog", "vhdl"]
-    },
+  // 1️⃣ Ask for project name
+  const { projectName } = await inquirer.prompt([
     {
       type: "input",
       name: "projectName",
       message: "Enter your project name:",
-      validate: (input) => input ? true : "Project name cannot be empty."
-    }
+      validate: (input) => input.trim() !== "" || "Project name cannot be empty.",
+    },
   ]);
 
-  const { language, projectName } = answers;
   const projectDir = path.resolve(process.cwd(), projectName);
 
-  console.log(chalk.gray(`\n📁 Creating ${language.toUpperCase()} project at:`));
-  console.log(chalk.white(`${projectDir}\n`));
+  // 2️⃣ Ask for HDL type
+  const { language } = await inquirer.prompt([
+    {
+      type: "list",
+      name: "language",
+      message: "Is this a Verilog or VHDL project?",
+      choices: ["Verilog", "VHDL"],
+    },
+  ]);
 
-  // Step 2: Check for HDL tools
-  await checkTools(language);
+  const lang = language.toLowerCase();
 
-  // Step 3: Copy the correct template
-  const templateDir = path.join(__dirname, "..", "templates", language);
-  await copyTemplates(language, projectDir, templateDir);
+  // 3️⃣ Create project directory
+  if (fs.existsSync(projectDir)) {
+    const { overwrite } = await inquirer.prompt([
+      {
+        type: "confirm",
+        name: "overwrite",
+        message: `Directory "${projectName}" already exists. Overwrite?`,
+        default: false,
+      },
+    ]);
+    if (!overwrite) {
+      log.warn("❌ Setup cancelled.");
+      return;
+    }
+    await fs.remove(projectDir);
+  }
 
-  // Step 4: Create VS Code tasks.json
-  await createVSCodeTasks(projectDir);
+  await fs.mkdirp(projectDir);
 
-  // Step 5: Install recommended VS Code extensions
+  // 4️⃣ Run setup steps
+  log.step(`Setting up ${language} project in ${projectName}/`);
+  await checkTools(lang);
+  await copyTemplates(lang, projectDir);
+  await createVSCodeTasks(lang, projectDir);
   await installExtensions(projectDir);
-  console.log(chalk.green.bold("\n✅ Project setup complete!"));
-  console.log(chalk.gray(`\n👉 Open the project in VS Code:\n`));
-  console.log(chalk.white(`   code ${projectDir}\n`));
+
+  // 5️⃣ Done
+  log.success(`✅ ${language} project "${projectName}" created successfully!`);
+  log.info(`Next steps:
+  cd ${projectName}
+  code .
+  `);
 }
+
+main().catch((err) => {
+  console.error("❌ Setup failed:", err);
+});

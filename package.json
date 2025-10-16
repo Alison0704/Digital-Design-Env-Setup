@@ -1,14 +1,16 @@
 {
   "name": "create-hdl",
   "version": "1.0.0",
-  "description": "A CLI scaffolder for Verilog and VHDL projects",
   "type": "module",
   "bin": {
-    "create-hdl": "./bin/cli.js"
+    "create-hdl": "setup/bin/cli.js"
+  },
+  "scripts": {
+    "start": "node setup/bin/cli.js"
   },
   "dependencies": {
     "chalk": "^5.3.0",
-    "inquirer": "^9.3.6",
-    "fs-extra": "^11.2.0"
+    "fs-extra": "^11.2.0",
+    "inquirer": "^9.2.15"
   }
 }

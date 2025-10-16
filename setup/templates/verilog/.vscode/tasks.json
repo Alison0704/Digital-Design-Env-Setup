@@ -8,14 +8,9 @@
       "group": "build"
     },
     {
-      "label": "Generate Netlist",
+      "label": "View Verilog Simulation",
       "type": "shell",
-      "command": "./scripts/generate_netlist.tcl"
-    },
-    {
-      "label": "Open Waveform",
-      "type": "shell",
-      "command": "./scripts/gen_wave.sh"
+      "command": "./scripts/view_wave.sh"
     }
   ]
 }

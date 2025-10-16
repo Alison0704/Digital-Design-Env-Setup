@@ -12,34 +12,32 @@ end entity;
 architecture behavior of tb_top_module is
     --=========================================================
     -- DUT (Design Under Test) Component Declaration
-    --=========================================================
+    --=======================`==================================
     component top_module
-        port ();
+        port (
+            -- TODO: define the ports
+        );
     end component;
     --=========================================================
     -- Internal Signal Declarations, constants and clock period
     --=========================================================
-    signal clk_tb       : std_logic := '0';
-    constant CLK_PERIOD : time := 10 ns;
+    -- TODO: declare signals to connect to DUT ports
 
 begin
     --=========================================================
     -- Instantiate the DUT
     --=========================================================
     uut: top_module
-        port map ();
+        port map (
+            -- TODO: connect signals to DUT ports
+        );
 
     --=========================================================
     -- Clock Generation Process
     --=========================================================
     clk_process : process
     begin
-        while true loop
-            clk_tb <= '0';
-            wait for CLK_PERIOD/2;
-            clk_tb <= '1';
-            wait for CLK_PERIOD/2;
-        end loop;
+        -- TODO: implement clock generation if needed
     end process;
 
     --=========================================================
@@ -47,14 +45,7 @@ begin
     --=========================================================
     stim_proc : process
     begin
-        -- Apply reset if needed
-        -- wait for some time
-        --//TODO Add reset logic if applicable
-        wait for 20 ns;
-        -- Add stimulus here
-
-        -- Finish simulation
-        wait;
+        -- TODO: apply test vectors to DUT inputs
     end process;
 
 end architecture;

@@ -1,5 +1,5 @@
 module top_module(
-  // ports
+  // TODO: implement ports
 );
   // TODO: implement
 endmodule

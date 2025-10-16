@@ -1,0 +1,16 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run VHDL Simulation",
+      "type": "shell",
+      "command": "./scripts/run_sim.sh",
+      "group": "build"
+    },
+    {
+      "label": "View VHDL Simulation",
+      "type": "shell",
+      "command": "./scripts/view_wave.sh"
+    }
+  ]
+}

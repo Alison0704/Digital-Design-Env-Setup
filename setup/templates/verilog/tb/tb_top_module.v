@@ -3,33 +3,26 @@
 module tb_top_module();  // Testbench module has no ports
 
     // Declare signals to connect to DUT (Device Under Test)
+    // TODO: declare input/output signals here
 
-    // Instantiate the DUT
-    top_module dut ();
-
+    top_module dut (
+        // TODO: connect signals to dut
+    );
+   
     // Clock generation
-    initial begin
-        clk = 0;
-        forever #5 clk = ~clk;  // 10ns clock period
-    end
+    // TODO: add clock generation if needed
 
     // Test stimulus
     initial begin
-        // Initialize signals
+        // TODO: initialize input signals here
 
-        // Release reset after some time
-        #20;
-        rst = 0;
-
-        // Apply test vectors
-
-        // Finish simulation
+        // TODO: add test stimulus here
         $finish;
     end
 
     // Waveform dump
     initial begin
-        $dumpfile("tb_top_module.vcd");  // VCD file in sim directory
+        $dumpfile("sim/wave.vcd");  // VCD file in sim directory
         $dumpvars(0, tb_top_module);
     end
 
