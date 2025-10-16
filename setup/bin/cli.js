@@ -7,7 +7,7 @@ import { checkTools } from "../lib/checkTools.js";
 import { copyTemplates } from "../lib/copyTemplates.js";
 import { createVSCodeTasks } from "../lib/createVSCodeTasks.js";
 import { installExtensions } from "../lib/installExtensions.js";
-import { log } from "../lib/utils.js";
+import { log, runCommand } from "../lib/utils.js";
 
 // Support __dirname in ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -69,10 +69,31 @@ async function main() {
 
   // 5️⃣ Done
   log.success(`✅ ${language} project "${projectName}" created successfully!`);
-  log.info(`Next steps:
+  
+  // 6️⃣ Ask if user wants to open in VS Code
+  const { openInVSCode } = await inquirer.prompt([
+    {
+      type: "confirm",
+      name: "openInVSCode",
+      message: "Open project in VS Code now?",
+      default: true,
+    },
+  ]);
+
+  if (openInVSCode) {
+    log.step("Opening project in VS Code...");
+    const { success } = await runCommand(`code "${projectDir}"`, { cwd: process.cwd() });
+    if (success) {
+      log.success("Project opened in VS Code!");
+    } else {
+      log.warn("Could not open VS Code automatically. Please run: code " + projectName);
+    }
+  } else {
+    log.info(`Next steps:
   cd ${projectName}
   code .
   `);
+  }
 }
 
 main().catch((err) => {
