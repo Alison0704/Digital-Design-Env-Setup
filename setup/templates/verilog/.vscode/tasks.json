@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run Verilog Simulation",
+      "type": "shell",
+      "command": "./scripts/run_sim.sh",
+      "group": "build"
+    },
+    {
+      "label": "Generate Netlist",
+      "type": "shell",
+      "command": "./scripts/generate_netlist.tcl"
+    },
+    {
+      "label": "Open Waveform",
+      "type": "shell",
+      "command": "./scripts/gen_wave.sh"
+    }
+  ]
+}
