@@ -16,7 +16,6 @@ export async function checkTools(language) {
       log.success("GHDL found.");
     }
   }
-
   // Check for Surfer waveform viewer
   if (!(await commandExists("surfer"))) {
     log.warn("Surfer not found. Please install it to view waveforms.");

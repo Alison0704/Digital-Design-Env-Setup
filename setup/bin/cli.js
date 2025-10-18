@@ -3,7 +3,7 @@ import inquirer from "inquirer";
 import fs from "fs-extra";
 import path from "path";
 import { fileURLToPath } from "url";
-import { checkTools } from "../lib/checkTools.js";
+import { checkAndInstallTools } from "../lib/installTools.js";
 import { copyTemplates } from "../lib/copyTemplates.js";
 import { createVSCodeTasks } from "../lib/createVSCodeTasks.js";
 import { installExtensions } from "../lib/installExtensions.js";
@@ -11,13 +11,12 @@ import { log, runCommand } from "../lib/utils.js";
 
 // Support __dirname in ES Modules
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 async function main() {
   console.clear();
   log.step("HDL Project Setup Wizard");
 
-  // 1️⃣ Ask for project name
+  // Ask for project name
   const { projectName } = await inquirer.prompt([
     {
       type: "input",
@@ -29,7 +28,7 @@ async function main() {
 
   const projectDir = path.resolve(process.cwd(), projectName);
 
-  // 2️⃣ Ask for HDL type
+  // Ask for HDL type
   const { language } = await inquirer.prompt([
     {
       type: "list",
@@ -41,7 +40,7 @@ async function main() {
 
   const lang = language.toLowerCase();
 
-  // 3️⃣ Create project directory
+  // Create project directory
   if (fs.existsSync(projectDir)) {
     const { overwrite } = await inquirer.prompt([
       {
@@ -60,17 +59,17 @@ async function main() {
 
   await fs.mkdirp(projectDir);
 
-  // 4️⃣ Run setup steps
+  // Run setup steps
   log.step(`Setting up ${language} project in ${projectName}/`);
-  await checkTools(lang);
+  await checkAndInstallTools(lang);
   await copyTemplates(lang, projectDir);
   await createVSCodeTasks(lang, projectDir);
   await installExtensions(projectDir);
 
-  // 5️⃣ Done
+  // Done
   log.success(`✅ ${language} project "${projectName}" created successfully!`);
   
-  // 6️⃣ Ask if user wants to open in VS Code
+  // Ask if user wants to open in VS Code
   const { openInVSCode } = await inquirer.prompt([
     {
       type: "confirm",
@@ -79,20 +78,24 @@ async function main() {
       default: true,
     },
   ]);
-
-  if (openInVSCode) {
+ 
+  // Open in VS Code if requested
+  if(openInVSCode){
     log.step("Opening project in VS Code...");
     const { success } = await runCommand(`code "${projectDir}"`, { cwd: process.cwd() });
-    if (success) {
+    if (success){
       log.success("Project opened in VS Code!");
-    } else {
+    }
+    else{
       log.warn("Could not open VS Code automatically. Please run: code " + projectName);
     }
-  } else {
-    log.info(`Next steps:
-  cd ${projectName}
-  code .
-  `);
+  } //Instructions if not opening automatically
+  else {
+    log.info(
+      `Next steps:
+      cd ${projectName}
+      code .`
+    );
   }
 }
 
